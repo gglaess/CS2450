@@ -1,1 +1,453 @@
-//This is the start of the homepage file
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Basic Game Shelf</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+    }
+
+    body {
+      padding: 24px 24px 90px;
+      background: #fff;
+      color: #111;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Header */
+    header {
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .left-controls, .right-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    button {
+      padding: 6px 12px;
+      border: 1px solid #111;
+      background: #fff;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    button:hover {
+      background: #f0f0f0;
+    }
+
+    body.editing .customize-btn {
+      display: none;
+    }
+
+    .done-btn {
+      display: none;
+      background: #111;
+      color: #fff;
+    }
+
+    body.editing .done-btn {
+      display: inline-block;
+    }
+
+    /* Simple Toggle */
+    .toggle {
+      display: inline-flex;
+      border: 1px solid #111;
+      cursor: pointer;
+    }
+
+    .toggle span {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    .toggle span.active {
+      background: #111;
+      color: #fff;
+    }
+
+    /* Main Grid */
+    main {
+      max-width: 800px;
+      width: 100%;
+      margin: 32px auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      position: relative;
+      border: 1px solid #111;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 150px;
+      background: #fff;
+    }
+
+    /* Jiggle Animation */
+    @keyframes jiggle {
+      0% { transform: rotate(-1deg); }
+      50% { transform: rotate(1deg); }
+      100% { transform: rotate(-1deg); }
+    }
+
+    body.editing .card {
+      animation: jiggle 0.25s infinite ease-in-out;
+      cursor: grab;
+    }
+
+    body.editing .card:nth-child(even) {
+      animation-delay: -0.12s;
+    }
+
+    body.editing .card.dragging {
+      opacity: 0.4;
+      animation: none;
+    }
+
+    .remove-btn {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      border-radius: 50%;
+      background: #111;
+      color: #fff;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    body.editing .remove-btn {
+      display: flex;
+    }
+
+    .add-card {
+      border: 1px dashed #111;
+      height: 150px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .add-card:hover {
+      background: #f5f5f5;
+    }
+
+    body.editing .add-card {
+      display: flex;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .game-title {
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .game-genre {
+      font-size: 12px;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    .count {
+      font-size: 12px;
+      color: #444;
+    }
+
+    .players {
+      font-size: 12px;
+      color: #222;
+      margin-top: auto;
+    }
+
+    /* Basic Modal */
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-bg.open {
+      display: flex;
+    }
+
+    .modal {
+      background: #fff;
+      border: 1px solid #111;
+      padding: 20px;
+      width: 100%;
+      max-width: 340px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .library-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .library-item:hover {
+      background: #f9f9f9;
+    }
+
+    /* Bottom Bar */
+    footer {
+      max-width: 400px;
+      width: 100%;
+      margin: 0 auto;
+      border: 1px solid #111;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+      font-size: 13px;
+    }
+
+    footer span {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="left-controls">
+      <strong>Welcome, User 1!</strong>
+      <button class="customize-btn" onclick="enterEditMode()">Customize Game Shelf</button>
+    </div>
+
+    <div class="right-controls">
+      <button class="done-btn" onclick="exitEditMode()">Done</button>
+      <span id="onlineText" style="font-size: 13px;">13 online</span>
+      <div class="toggle" onclick="toggleMode()">
+        <span id="optFriends" class="active">Friends</span>
+        <span id="optAll">All Players</span>
+      </div>
+    </div>
+  </header>
+
+  <main id="grid"></main>
+
+  <div class="modal-bg" id="modal" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <strong>Add Game</strong>
+        <button onclick="closeModal()">X</button>
+      </div>
+      <div id="libraryList"></div>
+    </div>
+  </div>
+
+  <footer>
+    <span><strong>Shelf</strong></span>
+    <span>Messages</span>
+    <span>Settings</span>
+  </footer>
+
+  <script>
+    let showAll = false;
+    let isEditing = false;
+    let draggedIndex = null;
+
+    const tags = [
+    'SwiftBadger42',
+    'LunarViper99',
+    'CrispyToast71',
+    'FrostPanda18',
+    'TurboWalrus84',
+    'VelvetFalcon63',
+    'SilentCactus27',
+    'NeonWombat55',
+    'RogueTurnip12',
+    'CosmicOtter90'
+    ];
+
+    let activeGames = [
+      { id: 'gta', name: 'GTA VI', genre: 'Action-Adventure', friends: 3, all: 42 },
+      { id: 'rl', name: 'Madden NFL 27', genre: 'Sports', friends: 2, all: 28 },
+      { id: 'apex', name: 'Apex Legends', genre: 'Battle Royale', friends: 3, all: 54 },
+      { id: 'mc', name: 'Minecraft', genre: 'Sandbox', friends: 2, all: 31 },
+      { id: 'lol', name: 'League of Legends', genre: 'MOBA', friends: 1, all: 49 },
+      { id: 'zel', name: 'CoD: MW4 ', genre: 'FPS', friends: 2, all: 23 }
+    ];
+
+    const library = [
+      ...activeGames,
+      { id: 'ow2', name: 'Overwatch 2', genre: 'Hero Shooter', friends: 4, all: 37 },
+      { id: 'cs2', name: 'Counter-Strike 2', genre: 'Tactical FPS', friends: 2, all: 61 },
+      { id: 'fn', name: 'Fortnite', genre: 'Battle Royale', friends: 5, all: 88 },
+      { id: 'dl2', name: 'NBA 2K27', genre: 'Sports', friends: 1, all: 19 }
+    ];
+
+    function getPlayersText(count) {
+      const shown = Math.min(count, 4);
+      const list = [];
+      for (let i = 0; i < shown; i++) {
+        list.push(tags[(i * 3 + count) % tags.length]);
+      }
+      if (count > 4) list.push(`+${count - 4}`);
+      return list.join(', ');
+    }
+
+    function render() {
+      const grid = document.getElementById('grid');
+      grid.innerHTML = activeGames.map((game, i) => {
+        const count = showAll ? game.all : game.friends;
+        return `
+          <div class="card"
+               draggable="${isEditing}"
+               ondragstart="dragStart(event, ${i})"
+               ondragover="dragOver(event)"
+               ondrop="drop(event, ${i})"
+               ondragend="dragEnd(event)">
+            <button class="remove-btn" onclick="removeGame(event, ${i})">−</button>
+            <div class="card-top">
+              <div>
+                <div class="game-title">${game.name}</div>
+                <div class="game-genre">${game.genre}</div>
+              </div>
+              <span class="count">${count} online</span>
+            </div>
+            <div class="players">${getPlayersText(count)}</div>
+          </div>
+        `;
+      }).join('') + `<div class="add-card" onclick="openModal()">+ Add Game</div>`;
+
+      const total = activeGames.reduce((sum, g) => sum + (showAll ? g.all : g.friends), 0);
+      document.getElementById('onlineText').innerText = `${total} online`;
+      document.getElementById('optFriends').classList.toggle('active', !showAll);
+      document.getElementById('optAll').classList.toggle('active', showAll);
+    }
+
+    function enterEditMode() {
+      isEditing = true;
+      document.body.classList.add('editing');
+      render();
+    }
+
+    function exitEditMode() {
+      isEditing = false;
+      document.body.classList.remove('editing');
+      render();
+    }
+
+    function dragStart(e, i) {
+      if (!isEditing) return;
+      draggedIndex = i;
+      e.currentTarget.classList.add('dragging');
+    }
+
+    function dragOver(e) {
+      if (isEditing) e.preventDefault();
+    }
+
+    function drop(e, targetIndex) {
+      if (!isEditing || draggedIndex === null || draggedIndex === targetIndex) return;
+      e.preventDefault();
+      const [moved] = activeGames.splice(draggedIndex, 1);
+      activeGames.splice(targetIndex, 0, moved);
+      draggedIndex = null;
+      render();
+    }
+
+    function dragEnd(e) {
+      e.currentTarget.classList.remove('dragging');
+      draggedIndex = null;
+    }
+
+    function removeGame(e, i) {
+      e.stopPropagation();
+      activeGames.splice(i, 1);
+      render();
+    }
+
+    function openModal() {
+      const unadded = library.filter(l => !activeGames.some(a => a.id === l.id));
+      const list = document.getElementById('libraryList');
+
+      list.innerHTML = unadded.length
+        ? unadded.map(g => `
+            <div class="library-item" onclick="addGame('${g.id}')">
+              <span>${g.name}</span>
+              <span>+ Add</span>
+            </div>
+          `).join('')
+        : '<p style="font-size:13px; color:#666;">All games added.</p>';
+
+      document.getElementById('modal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('open');
+    }
+
+    function addGame(id) {
+      const game = library.find(g => g.id === id);
+      if (game) {
+        activeGames.push({ ...game });
+        render();
+        closeModal();
+      }
+    }
+
+    function toggleMode() {
+      showAll = !showAll;
+      render();
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && isEditing) exitEditMode();
+    });
+
+    render();
+  </script>
+</body>
+</html>
