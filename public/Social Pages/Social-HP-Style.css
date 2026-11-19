@@ -1,22 +1,29 @@
-#title{
-    text-align: center;
+a{
+    /* here to remove underline in text */
+    text-decoration: none;
 }
-
 #socialButtons{
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 5px;
 }
-.HomeButton{
-    max-width: 50px;
-    height: 50px;
-}
+
 footer{
     max-width: fit-content;
 }
 button{
-    width: 150px;
+    width: 250px;
     border-style: solid;
-
+    font-size: 25px;
+    display: flex;
+    align-items: center;
+}
+.HomeButton{
+    max-width: 50px;
+    height: 50px;
+}
+img{
+    max-width: 100px;
+    max-height: 100px;
 }
