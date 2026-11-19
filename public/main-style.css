@@ -256,3 +256,7 @@ footer {
 footer span {
   cursor: pointer;
 }
+
+footer a { 
+text-decoration: none;
+}
