@@ -15,3 +15,8 @@ button{
 footer{
     max-width: fit-content;
 }
+img{
+    border: 1px;
+    margin: auto;
+    width: 300px;
+}

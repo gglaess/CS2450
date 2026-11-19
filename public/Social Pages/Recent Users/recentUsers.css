@@ -1,3 +1,33 @@
+.user{
+    border-style: solid;
+    display: table;
+    font-size: 20px;
+    
+}
+.user p{
+    display: table-cell;
+    vertical-align: top;
+    float: left;
+}
+.PFP{
+    border-style: solid;
+    border-left: 0px;
+    border-top: 0px;
+    border-bottom: 0px;
+    max-width: 100px;
+    display: table-cell;
+    float: left;
+}
+/* https://stackoverflow.com/questions/19458993/left-align-text-and-right-align-image-in-css */
+.moreArrow{
+    max-width: 50px;
+    max-height: 50px;
+    float: right;
+}
+
+
+
+
 
 footer{ 
     /* for home button to wrap around */
