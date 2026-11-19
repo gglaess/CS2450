@@ -27,6 +27,34 @@
 
 
 
+.view-profile-btn {
+    background-color: #75cddb;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+.report-user-btn {
+    background-color: #b40303;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+.report-user-btn:hover {
+    background: rgba(255,107,107,0.12);
+}
 
 
 footer{ 
